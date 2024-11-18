@@ -1,14 +1,15 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if( requested.id.id == "dagger.hilt.android.plugin") {
+                useModule("com.google.dagger:hilt-android-gradle-plugin:2.39.1")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -19,5 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OOP_Lab_3"
-include(":app")
+rootProject.name = "QRCodeScannerSample"
+include (":app")
+include(":scanner")
+include(":design")
