@@ -21,10 +21,18 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>() {
         initView()
     }
 
+    private fun showLanguageSelectionDialog() {
+    }
+
     private fun initView() {
         binding.btnScanQr.setOnClickListener {
             findNavController().navigate(R.id.action_menuFragment_to_scannerFragment)
         }
+
+        binding.btnSelectLanguage.setOnClickListener {
+            showLanguageSelectionDialog()
+        }
+
         // TODO: Add other buttons
     }
 }

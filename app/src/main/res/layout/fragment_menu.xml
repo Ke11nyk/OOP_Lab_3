@@ -11,8 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Сканувати QR код"/>
+        android:text="@string/scan_qr_Code"/>
 
-    <!-- Тут можна додати інші кнопки -->
+    <Button
+        android:id="@+id/btnSelectLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/select_language"/>
+    
 
 </LinearLayout>

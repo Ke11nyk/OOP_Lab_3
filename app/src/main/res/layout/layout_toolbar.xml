@@ -14,9 +14,8 @@
         android:layout_gravity="center"
         android:textStyle="bold"
         android:gravity="center"
-        android:text="@string/scan_qr_Code"
+        android:text="@string/app_name"
         android:textColor="@color/white_0"
         android:textSize="@dimen/_18sp" />
 
 </androidx.appcompat.widget.Toolbar>
-
