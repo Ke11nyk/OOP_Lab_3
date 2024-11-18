@@ -7,6 +7,7 @@ import com.licious.sample.design.ui.base.BaseFragment
 import com.licious.sample.scannersample.R
 import com.licious.sample.scannersample.databinding.FragmentMenuBinding
 import dagger.hilt.android.AndroidEntryPoint
+import android.content.Intent
 
 @AndroidEntryPoint
 class MenuFragment : BaseFragment<FragmentMenuBinding>() {
@@ -21,17 +22,16 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>() {
         initView()
     }
 
-    private fun showLanguageSelectionDialog() {
-    }
-
     private fun initView() {
         binding.btnScanQr.setOnClickListener {
             findNavController().navigate(R.id.action_menuFragment_to_scannerFragment)
         }
 
-        binding.btnSelectLanguage.setOnClickListener {
-            showLanguageSelectionDialog()
+        binding.btnSettings.setOnClickListener {
+            val intent = Intent(requireContext(), SettingsActivity::class.java)
+            startActivity(intent)
         }
+
 
         // TODO: Add other buttons
     }
