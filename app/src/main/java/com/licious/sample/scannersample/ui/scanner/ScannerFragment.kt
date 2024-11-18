@@ -44,7 +44,7 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
     }
 
     /**
-     *  Initialise views and and handle click listeners here
+     *  Initialise views and handle click listeners here
      */
     private fun initView() {
         qrCodeViewModel.startCamera(viewLifecycleOwner, requireContext(), binding.previewView, ::onResult)

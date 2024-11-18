@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_main"
-    app:startDestination="@id/fragment_scanner">
+    app:startDestination="@id/menuFragment">
 
     <fragment
-        android:id="@+id/fragment_scanner"
+        android:id="@+id/menuFragment"
+        android:name="com.licious.sample.scannersample.ui.menu.MenuFragment"
+        android:label="Головне меню">
+        <action
+            android:id="@+id/action_menuFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scannerFragment"
         android:name="com.licious.sample.scannersample.ui.scanner.ScannerFragment"
-        tools:layout="@layout/fragment_scanner" />
+        android:label="Сканер QR коду" />
 
 </navigation>
