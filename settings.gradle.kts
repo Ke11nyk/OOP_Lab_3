@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "QRCodeScannerSample"
+rootProject.name = "OOP_Lab_3"
 include (":app")
 include(":scanner")
 include(":design")
