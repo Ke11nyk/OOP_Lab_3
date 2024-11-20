@@ -1,3 +1,8 @@
+/**
+ * ScannerFragment.kt
+ * Fragment that implements the QR code scanning functionality.
+ * Handles camera preview, QR code detection, and provides feedback on successful scans.
+ */
 package com.licious.sample.scannersample.ui.scanner
 
 import android.content.Context
@@ -16,13 +21,12 @@ import com.licious.sample.scannersample.ui.scanner.viewmodels.ScannerViewModel
 import com.licious.sample.scanner.ScannerViewState
 import dagger.hilt.android.AndroidEntryPoint
 
-/**
- *  This Class will scan all qrcode and display it.
- */
 @AndroidEntryPoint
 class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
+    // ViewModel for handling scanner logic
     private val qrCodeViewModel: ScannerViewModel by viewModels()
 
+    // Vibrator service for haptic feedback
     private val vibrator: Vibrator by lazy {
         requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
@@ -32,35 +36,44 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
     override fun getViewBinding(): FragmentScannerBinding =
         FragmentScannerBinding.inflate(layoutInflater)
 
+    /**
+     * Initializes the scanner view and starts scanning animation
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         startAnimation()
     }
 
+    /**
+     * Cleanup vibrator when view is destroyed
+     */
     override fun onDestroyView() {
         vibrator.cancel()
         super.onDestroyView()
     }
 
     /**
-     *  Initialise views and handle click listeners here
+     * Initializes the camera preview and sets up QR code detection
      */
     private fun initView() {
         qrCodeViewModel.startCamera(viewLifecycleOwner, requireContext(), binding.previewView, ::onResult)
     }
 
     /**
-     * Success callback and error callback when barcode is successfully scanned. This method is also called while manually enter barcode
+     * Handles the result of QR code scanning
+     * Provides feedback through vibration and toast messages
+     *
+     * @param state Current state of the scanner
+     * @param result Scanned QR code result or error message
      */
     private fun onResult(state: ScannerViewState, result: String?) {
-        when(state)
-        {
+        when(state) {
             ScannerViewState.Success -> {
                 vibrateOnScan()
                 Toast.makeText(requireContext(), "result=${result}", Toast.LENGTH_SHORT).show()
             }
-             ScannerViewState.Error -> {
+            ScannerViewState.Error -> {
                 Toast.makeText(requireContext(), "error =${result}", Toast.LENGTH_SHORT).show()
             }
             else -> {
@@ -70,7 +83,7 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
     }
 
     /**
-     *  Animation for the red bar.
+     * Starts the scanning animation for the red bar
      */
     private fun startAnimation() {
         val animation: Animation = AnimationUtils.loadAnimation(context, com.licious.sample.scanner.R.anim.barcode_animator)
@@ -78,7 +91,8 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
     }
 
     /**
-     *  Vibration mobile on Scan successful.
+     * Provides haptic feedback when QR code is successfully scanned
+     * Handles different Android versions for vibration implementation
      */
     private fun vibrateOnScan() {
         try {
@@ -90,6 +104,7 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
                     )
                 )
             } else {
+                @Suppress("DEPRECATION")
                 vibrator.vibrate(VIBRATE_DURATION)
             }
         } catch (e: Exception) {
@@ -99,6 +114,6 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
 
     companion object {
         private const val TAG = "QrCodeReaderFragment"
-        private const val VIBRATE_DURATION = 200L
+        private const val VIBRATE_DURATION = 200L  // Duration of vibration feedback in milliseconds
     }
 }

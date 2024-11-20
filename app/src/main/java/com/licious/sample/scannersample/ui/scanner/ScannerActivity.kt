@@ -1,4 +1,9 @@
-package com.licious.sample.scannersample.ui
+/**
+ * ScannerActivity.kt
+ * Main activity for handling the camera scanner functionality.
+ * Manages camera permissions and hosts the scanner fragment.
+ */
+package com.licious.sample.scannersample.ui.scanner
 
 import android.Manifest
 import android.app.Activity
@@ -16,14 +21,18 @@ import com.licious.sample.scannersample.databinding.ActivityScannerBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-/**
- *  This class
- */
 @AndroidEntryPoint
 class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionListener {
     private var navController: NavController? = null
 
-    // Launcher to lunch Single Camera request.
+    @Inject
+    lateinit var permissionUtil: PermissionUtil
+
+    override fun getLogTag(): String = TAG
+
+    /**
+     * ActivityResultLauncher for handling single permission requests
+     */
     private val requestLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -32,7 +41,9 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
             permissionUtil.handleSinglePermissionResult(this, isGranted)
         }
 
-    // OnActivityResult to handle permission result.
+    /**
+     * ActivityResultLauncher for handling results from settings activity
+     */
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode != Activity.RESULT_OK) {
@@ -40,41 +51,56 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
             }
         }
 
-    override fun getLogTag(): String  = TAG
-
     override fun getViewBinding(): ActivityScannerBinding =
         ActivityScannerBinding.inflate(layoutInflater)
 
-    @Inject lateinit var permissionUtil: PermissionUtil
-
+    /**
+     * Initializes the activity and checks for required permissions
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
         checkPermission()
     }
 
+    /**
+     * Called when camera permission is granted
+     * Sets up the navigation graph
+     */
     override fun onPermissionGranted() {
         navController?.setGraph(R.navigation.nav_main)
     }
 
+    /**
+     * Called when permission is denied
+     * Rechecks the permission status
+     */
     override fun onPermissionDenied() {
-       checkPermission()
+        checkPermission()
     }
 
+    /**
+     * Called when permission rationale should be shown
+     * Displays permission explanation dialog
+     */
     override fun onPermissionRationale() {
         permissionAlertDialog()
     }
 
+    /**
+     * Initializes views and sets up navigation
+     */
     private fun initView(){
         permissionUtil.setPermissionListener(this)
         navController = binding.navHostFragment.getFragment<NavHostFragment>().navController
         binding.viewToolBar.toolbar.setNavigationOnClickListener{
-           finish()
+            finish()
         }
     }
 
     /**
-     *  Check camera permission.
+     * Checks if camera permission is granted
+     * Requests permission if not already granted
      */
     private fun checkPermission() {
         permissionUtil.apply {
@@ -91,7 +117,8 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
     }
 
     /**
-     *  Ask User to enable camera permissions.
+     * Shows an alert dialog explaining why camera permission is needed
+     * Provides options to open settings or deny permission
      */
     private fun permissionAlertDialog() {
         AlertDialog.Builder(this).apply {
@@ -111,7 +138,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
         }
     }
 
-    companion object{
+    companion object {
         private const val TAG = "ScannerActivity"
     }
 }

@@ -1,3 +1,8 @@
+/**
+ * ScannerViewModel.kt
+ * ViewModel responsible for managing QR code scanning business logic and camera operations.
+ * Uses Hilt for dependency injection and manages the scanner's lifecycle.
+ */
 package com.licious.sample.scannersample.ui.scanner.viewmodels
 
 import android.content.Context
@@ -10,15 +15,18 @@ import com.licious.sample.scanner.ScannerViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-/**
- *  This class contain the business logic for scanner.
- */
 @HiltViewModel
-class ScannerViewModel @Inject constructor(): ViewModel(){
+class ScannerViewModel @Inject constructor(): ViewModel() {
+    // Manager instance handling camera and scanning operations
     private lateinit var qrCodeManager: ScannerManager
 
     /**
-     * Initialize Camera Manager class.
+     * Initializes and starts the camera for QR code scanning
+     *
+     * @param viewLifecycleOwner Lifecycle owner for camera operations
+     * @param context Application context for camera initialization
+     * @param previewView View for displaying camera preview
+     * @param onResult Callback function for handling scan results/errors
      */
     internal fun startCamera(
         viewLifecycleOwner: LifecycleOwner,
@@ -27,10 +35,11 @@ class ScannerViewModel @Inject constructor(): ViewModel(){
         onResult: (state: ScannerViewState, result: String) -> Unit,
     ) {
         qrCodeManager = ScannerManager(
-            owner = viewLifecycleOwner, context = context,
+            owner = viewLifecycleOwner,
+            context = context,
             viewPreview = previewView,
             onResult = onResult,
-            lensFacing = CameraSelector.LENS_FACING_BACK
+            lensFacing = CameraSelector.LENS_FACING_BACK  // Using back camera for scanning
         )
     }
 }

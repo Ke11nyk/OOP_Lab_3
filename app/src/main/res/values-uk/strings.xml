@@ -7,7 +7,6 @@
     <string name="no">Ні</string>
     <string name="settings">Налаштування</string>
     <string name="select_language">Обрати мову</string>
-    <string name="language_changed">Мову було змінено. Перезапуск...</string>
     <string name="permission_msg">Для коректної роботи необхідно надати цей дозвіл. Застосунок автоматично закриється.</string>
 
     <string-array name="languages">
