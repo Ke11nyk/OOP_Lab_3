@@ -29,6 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.menu.SettingsActivity" />
+        <activity android:name=".ui.scanner.LinkDisplayActivity" />
     </application>
 
 </manifest>

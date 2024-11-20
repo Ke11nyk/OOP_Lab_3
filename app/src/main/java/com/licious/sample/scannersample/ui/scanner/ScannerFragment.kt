@@ -6,6 +6,7 @@
 package com.licious.sample.scannersample.ui.scanner
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -68,19 +69,25 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
      * @param result Scanned QR code result or error message
      */
     private fun onResult(state: ScannerViewState, result: String?) {
-        when(state) {
+        when (state) {
             ScannerViewState.Success -> {
                 vibrateOnScan()
-                Toast.makeText(requireContext(), "result=${result}", Toast.LENGTH_SHORT).show()
+                result?.let {
+                    // Перехід до нової сторінки
+                    val intent = Intent(requireContext(), LinkDisplayActivity::class.java)
+                    intent.putExtra("LINK", it)
+                    startActivity(intent)
+                }
             }
             ScannerViewState.Error -> {
-                Toast.makeText(requireContext(), "error =${result}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error: $result", Toast.LENGTH_SHORT).show()
             }
             else -> {
-                Toast.makeText(requireContext(), "error =${result}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Unknown error: $result", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
     /**
      * Starts the scanning animation for the red bar
