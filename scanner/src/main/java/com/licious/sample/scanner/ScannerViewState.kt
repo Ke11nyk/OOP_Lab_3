@@ -1,8 +1,11 @@
+/**
+ * ScannerViewState.kt
+ * Sealed class representing possible states of the scanner operation
+ * Success: Indicates successful barcode/QR code detection and decoding
+ * Error: Indicates failure in scanning process
+ */
 package com.licious.sample.scanner
 
-/**
- *  Preferable possible states for a qr/bar code..
- */
 sealed class ScannerViewState {
     object Success : ScannerViewState()
     object Error : ScannerViewState()
