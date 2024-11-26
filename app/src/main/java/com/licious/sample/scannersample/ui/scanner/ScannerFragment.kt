@@ -21,6 +21,7 @@ import com.licious.sample.scannersample.databinding.FragmentScannerBinding
 import com.licious.sample.scannersample.ui.scanner.viewmodels.ScannerViewModel
 import com.licious.sample.scanner.ScannerViewState
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
@@ -69,25 +70,27 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
      * @param result Scanned QR code result or error message
      */
     private fun onResult(state: ScannerViewState, result: String?) {
+        Timber.d("Scan result - State: %s, Result: %s", state, result)
         when (state) {
             ScannerViewState.Success -> {
                 vibrateOnScan()
                 result?.let {
-                    // Перехід до нової сторінки
+                    Timber.i("Successfully scanned QR code: %s", it)
                     val intent = Intent(requireContext(), LinkDisplayActivity::class.java)
                     intent.putExtra("LINK", it)
                     startActivity(intent)
                 }
             }
             ScannerViewState.Error -> {
+                Timber.e("Scan error: %s", result)
                 Toast.makeText(requireContext(), "Error: $result", Toast.LENGTH_SHORT).show()
             }
             else -> {
+                Timber.w("Unknown scan state: %s", result)
                 Toast.makeText(requireContext(), "Unknown error: $result", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     /**
      * Starts the scanning animation for the red bar
@@ -103,6 +106,7 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
      */
     private fun vibrateOnScan() {
         try {
+            Timber.d("Vibrating on successful scan")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator.vibrate(
                     VibrationEffect.createOneShot(
@@ -115,7 +119,7 @@ class ScannerFragment : BaseFragment<FragmentScannerBinding>() {
                 vibrator.vibrate(VIBRATE_DURATION)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e, "Vibration failed")
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 class PermissionUtil {
     // Stores the current permission being processed
@@ -28,14 +29,17 @@ class PermissionUtil {
      * @param isGranted Whether the permission was granted
      */
     fun handleSinglePermissionResult(activity: AppCompatActivity, isGranted: Boolean) {
+        Timber.d("Single Permission Result - $permissionName: ${if (isGranted) "Granted" else "Denied"}")
         when {
             isGranted -> {
                 permissionListener?.onPermissionGranted()
             }
             isShouldShowRequestPermissionRationale(activity, permissionName) -> {
+                Timber.i("Permission Rationale Needed: $permissionName")
                 permissionListener?.onPermissionRationale()
             }
             else -> {
+                Timber.w("Permission Permanently Denied: $permissionName")
                 permissionListener?.onPermissionDenied()
             }
         }
@@ -48,6 +52,7 @@ class PermissionUtil {
      */
     fun setPermissionListener(permissionListener: IGetPermissionListener) {
         this.permissionListener = permissionListener
+        Timber.d("Permission listener set")
     }
 
     /**
@@ -60,21 +65,27 @@ class PermissionUtil {
         activity: AppCompatActivity,
         permissions: Map<String, @JvmSuppressWildcards Boolean>
     ) {
+        Timber.d("Multi-Permission Result Processing")
         var isGranted = true
         permissions.entries.forEach {
+            Timber.v("Permission ${it.key}: ${if (it.value) "Granted" else "Denied"}")
             if (!it.value) {
                 isGranted = false
                 return@forEach
             }
         }
+
         when {
             isGranted -> {
+                Timber.i("All Permissions Granted")
                 permissionListener?.onPermissionGranted()
             }
             isShouldShowRequestPermissionRationale(activity, permissions) -> {
+                Timber.i("Permission Rationale Needed")
                 permissionListener?.onPermissionRationale()
             }
             else -> {
+                Timber.w("Permissions Denied")
                 permissionListener?.onPermissionDenied()
             }
         }
@@ -88,10 +99,12 @@ class PermissionUtil {
      * @return true if permission is granted, false otherwise
      */
     fun hasPermission(context: Context, permissionName: String): Boolean {
-        return ContextCompat.checkSelfPermission(
+        val isGranted = ContextCompat.checkSelfPermission(
             context,
             permissionName
         ) == PackageManager.PERMISSION_GRANTED
+        Timber.v("Permission Check - $permissionName: ${if (isGranted) "Granted" else "Denied"}")
+        return isGranted
     }
 
     /**
@@ -104,9 +117,11 @@ class PermissionUtil {
     fun hasMultiPermissions(context: Context, permissions: Array<String>): Boolean {
         permissions.forEach {
             if (!hasPermission(context, it)) {
+                Timber.d("Multi-Permission Check: Not all permissions granted")
                 return false
             }
         }
+        Timber.d("Multi-Permission Check: All permissions granted")
         return true
     }
 
@@ -118,6 +133,7 @@ class PermissionUtil {
      */
     fun requestPermission(permission: String, requestPermissions: ActivityResultLauncher<String>) {
         permissionName = permission
+        Timber.d("Requesting Permission: $permission")
         requestPermissions.launch(permission)
     }
 
@@ -131,6 +147,7 @@ class PermissionUtil {
         permissions: Array<String>,
         requestMultiplePermissions: ActivityResultLauncher<Array<String>>
     ) {
+        Timber.d("Requesting Multiple Permissions: ${permissions.joinToString()}")
         requestMultiplePermissions.launch(permissions)
     }
 
@@ -149,6 +166,7 @@ class PermissionUtil {
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", activity.packageName, null)
         )
+        Timber.d("Opening App Settings Page for Permissions")
         resultLauncher.launch(intent)
     }
 
@@ -163,12 +181,14 @@ class PermissionUtil {
         activity: AppCompatActivity,
         permission: String
     ): Boolean {
-        return !ActivityCompat.shouldShowRequestPermissionRationale(
+        val shouldShowRationale = !ActivityCompat.shouldShowRequestPermissionRationale(
             activity, permission
         ) && ContextCompat.checkSelfPermission(
             activity,
             permission
         ) != PackageManager.PERMISSION_GRANTED
+        Timber.v("Permission Rationale Check - $permission: $shouldShowRationale")
+        return shouldShowRationale
     }
 
     /**
@@ -186,6 +206,7 @@ class PermissionUtil {
             val isRationale = isShouldShowRequestPermissionRationale(activity, it.key)
             if (isRationale) {
                 permissionName = it.key
+                Timber.d("Permission Rationale Needed: $permissionName")
                 return isRationale
             }
         }

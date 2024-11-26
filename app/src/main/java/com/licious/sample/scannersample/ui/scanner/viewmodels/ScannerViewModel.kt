@@ -14,6 +14,7 @@ import com.licious.sample.scanner.ScannerManager
 import com.licious.sample.scanner.ScannerViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import timber.log.Timber
 
 @HiltViewModel
 class ScannerViewModel @Inject constructor(): ViewModel() {
@@ -34,12 +35,13 @@ class ScannerViewModel @Inject constructor(): ViewModel() {
         previewView: PreviewView,
         onResult: (state: ScannerViewState, result: String) -> Unit,
     ) {
+        Timber.d("Starting camera with back lens")
         qrCodeManager = ScannerManager(
             owner = viewLifecycleOwner,
             context = context,
             viewPreview = previewView,
             onResult = onResult,
-            lensFacing = CameraSelector.LENS_FACING_BACK  // Using back camera for scanning
+            lensFacing = CameraSelector.LENS_FACING_BACK
         )
     }
 }

@@ -13,6 +13,7 @@ import com.licious.sample.scannersample.R
 import com.licious.sample.scannersample.databinding.FragmentMenuBinding
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MenuFragment : BaseFragment<FragmentMenuBinding>() {
@@ -39,18 +40,16 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>() {
      * Initializes view components and sets up click listeners for navigation
      */
     private fun initView() {
-        // Navigate to scanner when QR scan button is clicked
         binding.btnScanQr.setOnClickListener {
+            Timber.i("Navigating to Scanner")
             findNavController().navigate(R.id.action_menuFragment_to_scannerFragment)
         }
 
-        // Launch settings activity when settings button is clicked
         binding.btnSettings.setOnClickListener {
+            Timber.i("Opening Settings Activity")
             val intent = Intent(requireContext(), SettingsActivity::class.java)
             startActivity(intent)
         }
-
-        // TODO: Add other buttons and their respective click handlers
     }
 
     companion object {

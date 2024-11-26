@@ -12,6 +12,7 @@ import com.licious.sample.design.ui.base.BaseActivity
 import com.licious.sample.scannersample.R
 import com.licious.sample.scannersample.databinding.ActivityLinkDisplayBinding
 import com.licious.sample.scannersample.databinding.ActivitySettingsBinding
+import timber.log.Timber
 
 class LinkDisplayActivity : BaseActivity<ActivityLinkDisplayBinding>() {
     // Tag used for logging purposes
@@ -33,15 +34,14 @@ class LinkDisplayActivity : BaseActivity<ActivityLinkDisplayBinding>() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_display)
 
-        // Retrieve the scanned link from the launching intent
         val link = intent.getStringExtra("LINK")
+        Timber.i("Received link: %s", link)
 
-        // Set up the TextView to display the link
         val linkTextView: TextView = findViewById(R.id.linkTextView)
         linkTextView.text = link
 
-        // Configure click listener to open the link in a browser
         linkTextView.setOnClickListener {
+            Timber.d("Opening link in browser: %s", link)
             val browserIntent = Intent(Intent.ACTION_VIEW).apply {
                 data = android.net.Uri.parse(link)
             }

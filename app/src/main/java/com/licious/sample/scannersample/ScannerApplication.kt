@@ -7,8 +7,10 @@ package com.licious.sample.scannersample
 
 import android.app.Application
 import android.content.Context
+import com.google.firebase.encoders.json.BuildConfig
 import com.licious.sample.design.ui.locale.LocaleHelper
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 @HiltAndroidApp
 class ScannerApplication : Application() {
@@ -20,5 +22,12 @@ class ScannerApplication : Application() {
      */
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(LocaleHelper.applyLocaleToBaseContext(base))
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 }

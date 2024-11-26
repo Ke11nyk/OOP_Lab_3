@@ -14,6 +14,7 @@ import com.licious.sample.design.ui.base.BaseActivity
 import com.licious.sample.design.ui.locale.LocaleHelper
 import com.licious.sample.scannersample.R
 import com.licious.sample.scannersample.databinding.ActivitySettingsBinding
+import timber.log.Timber
 
 class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
     // SharedPreferences instance to store application preferences
@@ -30,11 +31,12 @@ class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize SharedPreferences for storing settings
+        Timber.d("onCreate called")
+
         sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
-        // Set up language selection button click listener
         binding.btnSelectLanguage.setOnClickListener {
+            Timber.d("Language selection button clicked")
             showLanguageSelectionDialog()
         }
     }
@@ -47,15 +49,14 @@ class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
         val languages = resources.getStringArray(R.array.languages)
         val languageCodes = resources.getStringArray(R.array.language_codes)
 
+        Timber.d("Showing language selection dialog")
         AlertDialog.Builder(this)
             .setTitle(R.string.select_language)
             .setItems(languages) { _, which ->
                 val selectedLanguageCode = languageCodes[which]
 
-                // Apply the selected locale
+                Timber.i("Language selected: $selectedLanguageCode")
                 LocaleHelper.setLocale(this, selectedLanguageCode)
-
-                // Restart app to apply language changes
                 restartApplication()
             }
             .create()
@@ -67,6 +68,7 @@ class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
      * Clears the activity stack and starts fresh with the new locale
      */
     private fun restartApplication() {
+        Timber.d("Restarting application to apply language changes")
         val intent = packageManager.getLaunchIntentForPackage(packageName)
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(intent)

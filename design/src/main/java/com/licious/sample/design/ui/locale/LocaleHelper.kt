@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import java.util.Locale
+import timber.log.Timber
 
 object LocaleHelper {
     // Constants for SharedPreferences
@@ -23,11 +24,10 @@ object LocaleHelper {
      * @return A new Context object with the updated locale configuration
      */
     fun setLocale(context: Context, languageCode: String): Context {
-        // Save the selected language preference
+        Timber.d("Setting app locale to: $languageCode")
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putString(KEY_LANGUAGE, languageCode).apply()
 
-        // Update and return the localized context
         return updateResourcesLocale(context, languageCode)
     }
 
@@ -40,7 +40,10 @@ object LocaleHelper {
      */
     fun getPersistedLocale(context: Context): String {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return prefs.getString(KEY_LANGUAGE, Locale.getDefault().language) ?: Locale.getDefault().language
+        val persistedLanguage = prefs.getString(KEY_LANGUAGE, Locale.getDefault().language)
+            ?: Locale.getDefault().language
+        Timber.d("Retrieved persisted locale: $persistedLanguage")
+        return persistedLanguage
     }
 
     /**
@@ -58,18 +61,16 @@ object LocaleHelper {
         val resources = context.resources
         val configuration = Configuration(resources.configuration)
 
+        Timber.d("Updating resources configuration for locale: $language")
         return when {
-            // For Android N (API 24) and above
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
                 configuration.setLocale(locale)
                 context.createConfigurationContext(configuration)
             }
-            // For Android Jelly Bean MR1 (API 17) to Android M (API 23)
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
                 configuration.setLocale(locale)
                 context.createConfigurationContext(configuration)
             }
-            // For Android versions below Jelly Bean MR1 (API 17)
             else -> {
                 @Suppress("DEPRECATION")
                 configuration.locale = locale
@@ -89,6 +90,7 @@ object LocaleHelper {
      */
     fun applyLocaleToBaseContext(base: Context): Context {
         val persistedLocale = getPersistedLocale(base)
+        Timber.d("Applying persisted locale: $persistedLocale")
         return setLocale(base, persistedLocale)
     }
 }

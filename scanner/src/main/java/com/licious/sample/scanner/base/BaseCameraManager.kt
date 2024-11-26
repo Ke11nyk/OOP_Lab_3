@@ -22,6 +22,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import timber.log.Timber
 
 abstract class BaseCameraManager(
     private val owner: LifecycleOwner,
@@ -97,7 +98,7 @@ abstract class BaseCameraManager(
             }
             previewView.setSurfaceProvider(viewPreview.surfaceProvider)
         } catch (exc: Exception) {
-            Log.e(ContentValues.TAG, "Use case binding failed $exc")
+            Timber.e(exc, "Use case binding failed")
         }
     }
 
@@ -132,6 +133,7 @@ abstract class BaseCameraManager(
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         cameraExecutor.shutdown()
+        Timber.d("Camera resources cleaned up")
     }
 
     /**

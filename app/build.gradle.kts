@@ -39,8 +39,10 @@ android {
 }
 
 dependencies {
+    implementation("com.jakewharton.timber:timber:5.0.1")
     implementation(project(":design"))
     implementation(project(":scanner"))
+    implementation("com.google.firebase:firebase-encoders-json:17.1.0")
     androidX()
     daggerHilt()
     testEspressoCore()

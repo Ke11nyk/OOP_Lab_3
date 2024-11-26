@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class ScannerAnalyzer(
     private val onResult: (state: ScannerViewState, barcode: String) -> Unit
@@ -32,7 +33,6 @@ class ScannerAnalyzer(
      */
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(imageProxy: ImageProxy) {
-        // Configure barcode scanner to detect all supported formats
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
             .build()
@@ -44,15 +44,20 @@ class ScannerAnalyzer(
                 .let { image ->
                     scanner.process(image)
                         .addOnSuccessListener { barcodes ->
-                            for (barcode in barcodes) {
-                                onResult(ScannerViewState.Success, barcode.rawValue ?: "")
+                            if (barcodes.isNotEmpty()) {
+                                Timber.i("Successfully scanned ${barcodes.size} barcodes")
+                                for (barcode in barcodes) {
+                                    onResult(ScannerViewState.Success, barcode.rawValue ?: "")
+                                }
+                            } else {
+                                Timber.d("No barcodes detected in the image")
                             }
                         }
-                        .addOnFailureListener {
-                            onResult(ScannerViewState.Error, it.message.toString())
+                        .addOnFailureListener { error ->
+                            Timber.e(error, "Barcode scanning failed")
+                            onResult(ScannerViewState.Error, error.message.toString())
                         }
                         .addOnCompleteListener {
-                            // Delay before processing next frame and release resources
                             CoroutineScope(Dispatchers.IO).launch {
                                 delay(delayForProcessingNextImage)
                                 imageProxy.close()
@@ -60,6 +65,7 @@ class ScannerAnalyzer(
                         }
                 }
         } else {
+            Timber.w("Image is empty, skipping processing")
             onResult(ScannerViewState.Error, "Image is empty")
         }
     }

@@ -17,6 +17,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import com.licious.sample.scanner.base.BaseCameraManager
+import timber.log.Timber
 
 class ScannerManager(
     owner: LifecycleOwner,
@@ -49,12 +50,17 @@ class ScannerManager(
         previewView: Preview,
         imageCapture: ImageCapture
     ) {
-        camera = cameraProvider.bindToLifecycle(
-            owner,
-            cameraSelector,
-            previewView,
-            getImageAnalysis(),
-            imageCapture
-        )
+        try {
+            camera = cameraProvider.bindToLifecycle(
+                owner,
+                cameraSelector,
+                previewView,
+                getImageAnalysis(),
+                imageCapture
+            )
+            Timber.d("Camera use cases bound successfully")
+        } catch (exc: Exception) {
+            Timber.e(exc, "Failed to bind camera use cases")
+        }
     }
 }

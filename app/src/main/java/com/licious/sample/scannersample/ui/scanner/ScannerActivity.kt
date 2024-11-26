@@ -20,6 +20,7 @@ import com.licious.sample.scannersample.R
 import com.licious.sample.scannersample.databinding.ActivityScannerBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionListener {
@@ -59,6 +60,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.d("ScannerActivity created")
         initView()
         checkPermission()
     }
@@ -68,6 +70,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
      * Sets up the navigation graph
      */
     override fun onPermissionGranted() {
+        Timber.i("Camera permission granted")
         navController?.setGraph(R.navigation.nav_main)
     }
 
@@ -76,6 +79,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
      * Rechecks the permission status
      */
     override fun onPermissionDenied() {
+        Timber.w("Camera permission denied")
         checkPermission()
     }
 
@@ -84,8 +88,10 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
      * Displays permission explanation dialog
      */
     override fun onPermissionRationale() {
+        Timber.d("Showing permission rationale dialog")
         permissionAlertDialog()
     }
+
 
     /**
      * Initializes views and sets up navigation
@@ -109,8 +115,10 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>(), IGetPermissionLi
                     Manifest.permission.CAMERA
                 )
             ) {
+                Timber.w("Camera permission not granted, requesting permission")
                 requestPermission(Manifest.permission.CAMERA, requestLauncher)
             } else {
+                Timber.i("Camera permission already granted")
                 navController?.setGraph(R.navigation.nav_main)
             }
         }
